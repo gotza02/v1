@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/basht
 iser=$(cat /root/.isp)
 if [[ $iser -gt 0 ]]; then
 curl "ipinfo.io/org?token=7a814b6263b02c" > /root/.isp
