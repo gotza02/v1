@@ -50,7 +50,7 @@ backup_configs() {
 restore_configs() {
     log_message "Restoring configurations..."
     cp "$CONFIG_BACKUP" /etc/sysctl.conf || handle_error "Failed to restore sysctl.conf"
-    cp "$  "$NETWORK_BACKUP" /etc/network/interfaces || handle_error "Failed to restore network interfaces"
+    cp "$NETWORK_BACKUP" /etc/network/interfaces || handle_error "Failed to restore network interfaces"
     cp "$RESOLV_BACKUP" /etc/resolv.conf || handle_error "Failed to restore resolv.conf"
     sysctl -p || handle_error "Failed to apply restored sysctl settings"
 }
@@ -93,7 +93,7 @@ optimize_network() {
     echo "nameserver 9.9.9.9" >> /etc/resolv.conf
     # Set MTU to 1400 for VPN
     IFACE=$(ip route | grep default | awk '{print $5}')
-    ip link set dev $IFACE mtu 1400 || log_message "${YELLOW}Warning: Failed to set MTU${NC}"
+    ip link set dev "$IFACE" mtu 1400 || log_message "${YELLOW}Warning: Failed to set MTU${NC}"
     # Test network speed
     if command -v curl > /dev/null; then
         SPEED=$(curl -s -o /dev/null -w "%{speed_download}" http://speedtest.ookla.com/speedtest/random4000x4000.jpg)
@@ -104,8 +104,8 @@ optimize_network() {
 
 # Function to set cron job
 set_cron_job() {
-    CRON_JOB="0 3 * * * /bin/bash $(realpath $0) optimize"
-    (crontab -l 2>/dev/null | grep -v "$(realpath $0)"; echo "$CRON_JOB") | crontab - || log_message "${YELLOW}Warning: Failed to set cron job${NC}"
+    CRON_JOB="0 3 * * * /bin/bash $(realpath "$0") optimize"
+    (crontab -l 2>/dev/null | grep -v "$(realpath "$0")"; echo "$CRON_JOB") | crontab - || log_message "${YELLOW}Warning: Failed to set cron job${NC}"
 }
 
 # Main execution with interactive menu
@@ -116,7 +116,7 @@ echo "1) Optimize VPS"
 echo "2) Restore from Backup"
 read -p "Enter your choice (1 or 2): " choice
 
-case $choice in
+case "$choice" in
     1)
         log_message "Starting optimization..."
         backup_configs
